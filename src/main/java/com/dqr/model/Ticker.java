@@ -1,6 +1,7 @@
 package com.dqr.model;
 
 import lombok.Builder;
+import lombok.Data;
 
 import java.util.Date;
 
@@ -9,9 +10,9 @@ import java.util.Date;
  *
  * Created by dqromney on 3/2/17.
  */
-@lombok.Data
+@Data
 @Builder
-public class ticker {
+public class Ticker {
     Long id;
     String symbol;
     String exchange;

@@ -1,4 +1,4 @@
-package com.dqr.jobs;
+package com.dqr.jobs.eodJob;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;

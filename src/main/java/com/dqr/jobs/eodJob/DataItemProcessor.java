@@ -1,13 +1,14 @@
-package com.dqr.jobs;
+package com.dqr.jobs.eodJob;
 
 import javax.batch.api.chunk.ItemProcessor;
 
 /**
- * Quote Item Processor.
+ * Data Item processor.
  *
  * Created by dqromney on 3/2/17.
  */
-public class QuoteItemProcessor implements ItemProcessor {
+public class DataItemProcessor implements ItemProcessor {
+
     /**
      * The processItem method is part of a chunk
      * step. It accepts an input item from an

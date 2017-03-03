@@ -1,4 +1,4 @@
-package com.dqr.jobs;
+package com.dqr.jobs.eodJob;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;

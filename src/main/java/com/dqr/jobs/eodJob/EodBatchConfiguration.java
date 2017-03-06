@@ -1,7 +1,12 @@
 package com.dqr.jobs.eodJob;
 
 import com.dqr.model.Data;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionListener;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
@@ -11,11 +16,16 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.Date;
 
 /**
@@ -49,7 +59,7 @@ public class EodBatchConfiguration {
 
     @Bean
     public Job processEodJob() {
-        return jobBuilderFactory.get("processOrderJob")
+        return jobBuilderFactory.get("processEodJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener())
                 .flow(eodStep())
@@ -59,7 +69,7 @@ public class EodBatchConfiguration {
 
     @Bean
     public Step eodStep() {
-        return stepBuilderFactory.get("eodStep").<Data, SvcReq>chunk(3)
+        return stepBuilderFactory.get("eodStep").chunk(10)
                 .reader(reader())
                 .processor(processor())
                 .writer(writer())
@@ -101,5 +111,21 @@ public class EodBatchConfiguration {
     public JobExecutionListener listener() {
         return new JobCompletionNotificationListener();
     }
+
+    @Bean
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
+    public DataSource mysqlDataSource() throws SQLException {
+    final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        dataSource.setUrl("jdbc:mysql://192.168.0.40:3306/quotes");
+        dataSource.setUsername("root");
+        dataSource.setPassword("iag15501");
+        return dataSource;
+    }
+
 
 }

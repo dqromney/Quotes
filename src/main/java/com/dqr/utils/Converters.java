@@ -23,7 +23,7 @@ public class Converters {
         return n;
     }
 
-    // 2017-02-17
+    // 2017-02-17, 1999-11-18
     public static Date strToDate(String dateStr) {
             DateFormat df = new SimpleDateFormat("yyy-MM-dd");
             Date dateFromStr = null;

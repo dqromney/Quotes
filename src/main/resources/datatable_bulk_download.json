@@ -1,0 +1,12 @@
+{
+    "datatable_bulk_download": {
+        "file": {
+            "link": "https://duf9k3nptkna3.cloudfront.net/WIKI/PRICES/WIKI_PRICES_212b326a081eacca455e13140d7bb9db.zip?api_key=iDys-FbJZTMWF56LXBie&snapshot_time=2017-03-04+02%3A05%3A39+UTC&Expires=1488821331&Signature=dKvrMgKaZPJd1qY9j-cx81jsrqOl-2TOHkHJOHpFDnb7pWsaoJGOhknGWo4LoHNarVBZXXVKIpm9QLabF5rZoTOJBId7Jf~zx3VvWE~R3J1mEeFumPOrSmMpAVjqzF4Klds13fvuI2rXbdrEfiJ-U4CdMslV9Fdxazmil-Glz9pwhLctXGUEnw5hbHPyAZ-5TXRuMkqAuPmj5HpqmppJ-J9VWi6lqWwSmJs1OOxzYN4jEv10XXP9LwBnDdxdPtJRgzCYOTqgTAOs8mei7G9Bp5WoChQKLj45DzKObKCQjsz7WCgXaTrw4AzCdtqm7pBy15RTK3wUdugCmtpNqXPo1A__&Key-Pair-Id=APKAJ22GRK7AQ76GWFJQ",
+            "status": "fresh",
+            "data_snapshot_time": "2017-03-04 02:05:39 UTC"
+        },
+        "datatable": {
+            "last_refreshed_time": "2017-03-04 00:41:25 UTC"
+        }
+    }
+}

@@ -1,5 +1,6 @@
 package com.dqr.jobs.eodJob;
 
+import com.dqr.config.BatchScheduler;
 import com.dqr.factory.Webservice;
 import com.dqr.factory.WebserviceFactory;
 import com.dqr.model.Data;
@@ -12,6 +13,7 @@ import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
@@ -23,17 +25,16 @@ import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
-import javax.sql.DataSource;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -42,7 +43,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.zip.ZipInputStream;
 
@@ -51,11 +51,10 @@ import java.util.zip.ZipInputStream;
  * <p>
  * Created by dqromney on 3/1/17.
  */
+@Configuration
+@EnableBatchProcessing
+@Import({BatchScheduler.class})
 public class EodBatchConfiguration {
-
-    private Resource inputResource;
-    private String targetDirectory;
-    private String targetFile;
 
     @Autowired
     private SimpleJobLauncher jobLauncher;
@@ -66,6 +65,10 @@ public class EodBatchConfiguration {
     @Autowired
     public StepBuilderFactory stepBuilderFactory;
 
+    private Resource inputResource;
+    private String targetDirectory;
+    private String targetFile;
+
     // @Scheduled(cron = "1 53/3 17 * * ?")
     // Every fifteen minutes
     @Scheduled(cron = "0 0/15 * 1/1 * ? *")
@@ -75,7 +78,7 @@ public class EodBatchConfiguration {
         JobParameters param = new JobParametersBuilder().addString("JobID",
                 String.valueOf(System.currentTimeMillis())).toJobParameters();
 
-        JobExecution execution = jobLauncher.run(processEodJob(), param);
+         JobExecution execution = jobLauncher.run(processEodJob(), param);
 
         System.out.println("Job finished with status :" + execution.getStatus());
 
@@ -113,8 +116,8 @@ public class EodBatchConfiguration {
                     }
                     File target = new File(targetDirectory, targetFile);
                     BufferedOutputStream dest = null;
-                    while(zis.getNextEntry() != null) {
-                        if(!target.exists()) {
+                    while (zis.getNextEntry() != null) {
+                        if (!target.exists()) {
                             target.createNewFile();
                         }
                         FileOutputStream fos = new FileOutputStream(target);
@@ -124,12 +127,25 @@ public class EodBatchConfiguration {
                         dest.close();
                     }
                     zis.close();
-                    if(!target.exists()) {
+                    if (!target.exists()) {
                         throw new IllegalStateException("Could not decompress anything from the archive:");
                     }
                     return RepeatStatus.FINISHED;
                 }).build();
     }
+
+//    @Bean
+//    @Autowired
+//    public JobOperator jobOperator(JobExplorer jobExplorer, JobLauncher jobLauncher, JobRepository jobRepository, ListableJobLocator jobRegistry)
+//    {
+//        SimpleJobOperator jobOperator = new SimpleJobOperator();
+//        jobOperator.setJobExplorer(jobExplorer);
+//        jobOperator.setJobLauncher(jobLauncher);
+//        jobOperator.setJobRepository(jobRepository);
+//        jobOperator.setJobRegistry(jobRegistry);
+//
+//        return jobOperator;
+//    }
 
 //    @Bean
 //    public Step eodStep() {
@@ -176,20 +192,20 @@ public class EodBatchConfiguration {
         return new JobCompletionNotificationListener();
     }
 
-    @Bean
-    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
+//    @Bean
+//    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+//        return new JdbcTemplate(dataSource);
+//    }
 
-    @Bean
-    public DataSource mysqlDataSource() throws SQLException {
-    final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://192.168.0.40:3306/quotes");
-        dataSource.setUsername("root");
-        dataSource.setPassword("iag15501");
-        return dataSource;
-    }
+//    @Bean
+//    public DataSource mysqlDataSource() throws SQLException {
+//    final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+//        dataSource.setUrl("jdbc:mysql://192.168.0.40:3306/quotes");
+//        dataSource.setUsername("root");
+//        dataSource.setPassword("iag15501");
+//        return dataSource;
+//    }
 
 
     /**

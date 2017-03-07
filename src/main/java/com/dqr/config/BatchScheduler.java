@@ -8,14 +8,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-/**
- * Batch Scheduler.
- *
- * Created by dqromney on 3/1/17.
- */
 @Configuration
 @EnableScheduling
 public class BatchScheduler {
+
+    private MapJobRepositoryFactoryBean factory;
 
     @Bean
     public ResourcelessTransactionManager transactionManager() {
@@ -23,20 +20,16 @@ public class BatchScheduler {
     }
 
     @Bean
-    public MapJobRepositoryFactoryBean mapJobRepositoryFactory(
-            ResourcelessTransactionManager txManager) throws Exception {
+    public MapJobRepositoryFactoryBean mapJobRepositoryFactory(ResourcelessTransactionManager txManager) throws Exception {
 
-        MapJobRepositoryFactoryBean factory = new
-                MapJobRepositoryFactoryBean(txManager);
-
+        MapJobRepositoryFactoryBean factory = new MapJobRepositoryFactoryBean(txManager);
         factory.afterPropertiesSet();
 
         return factory;
     }
 
     @Bean
-    public JobRepository jobRepository(
-            MapJobRepositoryFactoryBean factory) throws Exception {
+    public JobRepository jobRepository(MapJobRepositoryFactoryBean factory) throws Exception {
         return factory.getObject();
     }
 
@@ -46,4 +39,5 @@ public class BatchScheduler {
         launcher.setJobRepository(jobRepository);
         return launcher;
     }
+
 }
